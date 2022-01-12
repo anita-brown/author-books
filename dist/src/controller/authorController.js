@@ -21,6 +21,7 @@ const getAllAuthors = (req, res) => {
     }
     catch (error) {
         console.log(error, "error occured");
+        res.status(500).json({ msg: "Server error occured" });
     }
 };
 exports.getAllAuthors = getAllAuthors;
@@ -46,6 +47,7 @@ const create_authors = async (req, res) => {
     }
 };
 exports.create_authors = create_authors;
+// update author
 const updateAuthor = (req, res) => {
     //catch error from request body
     try {
@@ -80,6 +82,7 @@ const getAuthorById = (req, res) => {
     }
 };
 exports.getAuthorById = getAuthorById;
+// delete Author
 const deleteAuthor = (req, res) => {
     try {
         authorModel_1.default.findOneAndDelete({ _id: req.params.id }, (err, authors) => {

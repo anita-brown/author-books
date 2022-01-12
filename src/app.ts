@@ -4,18 +4,17 @@ import express, { NextFunction, Request, Response }  from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-
+// import mongoose from "mongoose";
 import authorRouter from './routes/authorRoute'
 import bookRouter from './routes/bookRoute'
-// import postRouter from './routes/post';
-import mongoConnection from "./config/mongoConnection";
 import usersRouter from './routes/users';
 import cors from 'cors';
-
 const corsOptions = {
   origin: ["http://localhost:3000","http://localhost:5500"],
   optionsSuccessStatus: 200
 }
+
+
 
 // const mongoURL = process.env.DATABASE as string,
 

@@ -24,6 +24,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const authorController = __importStar(require("../controller/authorController"));
+// import { checkAuth } from '../controller/usersController';
 const router = express_1.default.Router();
 router.post("/create_authors", authorController.create_authors);
 router.get('/', authorController.getAllAuthors);

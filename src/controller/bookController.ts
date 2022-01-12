@@ -1,64 +1,95 @@
-import express, { Request, Response, NextFunction } from 'express';
-// import { readFile, writeFile, author } from '../utils/utils';
-import { validateEntry } from '../utils/utils';
-import jwt from "jsonwebtoken"
-const mySecret = 'ughyjkkoiughjkhu3jkhu748uhjki78h'
-import Book from '../models/bookModel';
-
+import express, { Request, Response, NextFunction } from "express";
+import { books } from "../utils/utils";
+import { validateBookEntry } from "../utils/utils";
+import jwt from "jsonwebtoken";
+const mySecret = "ughyjkkoiughjkhu3jkhu748uhjki78h";
+import Book from "../models/bookModel";
 
 //get all books
 
-export const getABook =(req:Request,res:Response)=>{
-    try {
-       
-   
-    Book.find({},(err:any, books:any)=>{
-    
-    if(err) return res.json({msg:"error occur in getting all authors book..."});
+export const getABook = (req: Request, res: Response) => {
+  try {
+    Book.find({}, (err: any, books: books) => {
+      if (err)
+        return res.json({ msg: "error occur in getting all authors book..." });
 
-    if(books){
-
-     res.json(books)
-    }
-    })
-    } catch (error) {
-         console.log(error, "error occured")
-    }
-
-}
-
-
+      if (books) {
+        res.json(books);
+      }
+    });
+  } catch (error) {
+    console.log(error, "error occured");
+  }
+};
 
 // create book
 
-
-export const create_book = async(req:Request, res:Response)=>{
-try {
-     
-    const {error} =  validateEntry(req.body);
-    if(error){
-        return res.status(401).json({msg:" Validation failed"})
+export const create_book = async (req: Request, res: Response) => {
+  try {
+    const { error } = validateBookEntry(req.body);
+    if (error) {
+      return res.status(401).json({ msg: " Validation failed" });
     }
 
-    const {author_name, age, address} = req.body
+    res.status(201).json({ msg: " book saved...." });
 
-console.log(author_name)
+    const { authorId, bookname, isPublished, datePublished, serialNumber } =
+      req.body;
 
     await Book.create({
-        author_name,
-        age,
-        address
-    })
+      authorId,
+      bookname,
+      isPublished,
+      datePublished,
+      serialNumber,
+    });
+  } catch (error) {
+    console.log(error, "error occured.");
+    res.status(500).json({ msg: "Server error occured" });
+  }
+};
 
-    res.status(201).json({msg:" author saved...."})
+// update author
 
-} catch (error) {
-     console.log(error, "error occured.")
-     res.status(500).json({msg: "Server error occured"})
-    
-}
+export const updateBook = (req: Request, res: Response) => {
+  //catch error from request body
+  try {
+    Book.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      (err: any, books: books) => {
+        res.status(201).json({ msg: " book updated...." });
 
-}
+        if (err) return res.json(err);
+
+        if (books) {
+          return res.json(books);
+        }
+      }
+    );
+  } catch (error) {
+    console.log(error, "error occured");
+    res.status(500).json({ msg: "Server error occured" });
+  }
+};
+
+// delete Book
+
+export const deleteBook = (req: Request, res: Response) => {
+  try {
+    Book.findOneAndDelete({ _id: req.params.id }, (err: any, books: books) => {
+      res.status(201).json({ msg: " book deleted...." });
+      if (err) return res.json(err);
+
+      if (books) {
+        return res.json(books);
+      }
+    });
+  } catch (error) {
+    console.log(error, "error occured");
+    res.status(500).json({ msg: "Server error occured" });
+  }
+};
 
 
 
@@ -72,30 +103,21 @@ console.log(author_name)
 //     Author.findByIdAndUpdate(req.params.id, req.body,(err:any, authors:any)=>{
 
 //     res.status(201).json({msg:" author updated...."})
-    
+
 //     if(err) return res.json(err);
 
 //     if(authors){
- 
-//     return res.json(authors)  
+
+//     return res.json(authors)
 //     }
 
 //     })
-    
+
 // } catch (error) {
 //      console.log(error, "error occured")
 // }
 
 // }
-
-
-
-
-
-
-
-
-
 
 // export const getABook = (req: any, res: Response, next: NextFunction) => {
 
@@ -118,9 +140,7 @@ console.log(author_name)
 //         }
 //     });
 
-
 // }
-
 
 // export const postBook = (req: any, res: Response) => {
 
@@ -169,10 +189,8 @@ console.log(author_name)
 
 //             res.status(201).json({ message: "new book added", author: authorFind })
 
-
 //         }
 //     });
-
 
 // }
 
@@ -203,7 +221,6 @@ console.log(author_name)
 //     }
 //     )
 // };
-
 
 // export const deleteBook = (req: any, res: Response, next: NextFunction) => {
 

@@ -24,6 +24,7 @@ export const getAllAuthors =(req:Request,res:Response)=>{
     })
     } catch (error) {
          console.log(error, "error occured")
+         res.status(500).json({msg: "Server error occured"})
     }
 
 }
@@ -61,14 +62,14 @@ console.log(author_name)
 
 
 
-
+// update author
 
 export const updateAuthor=(req:Request,res:Response)=>{
 
 //catch error from request body
 try {
 
-    Author.findByIdAndUpdate(req.params.id, req.body,(err:any, authors:any)=>{
+    Author.findByIdAndUpdate(req.params.id, req.body,(err:any, authors:string)=>{
 
     res.status(201).json({msg:" author updated...."})
     
@@ -96,7 +97,7 @@ export const getAuthorById =(req:Request,res:Response)=>{
 //catch error from request body
 try {
     
-    Author.findById(req.params.id,(err:any, authors:any)=>{
+    Author.findById(req.params.id,(err:any, authors:string)=>{
     
     if(err) return res.json(err);
 
@@ -114,12 +115,13 @@ try {
  
 }
 
+// delete Author
 
 export const deleteAuthor = (req: Request, res: Response) => {
 
     try {
         
-    Author.findOneAndDelete({_id:req.params.id}, (err:any, authors:any)=>{
+    Author.findOneAndDelete({_id:req.params.id}, (err:any, authors:string)=>{
     res.status(201).json({msg:" author deleted...."})
     if(err) return res.json(err);
 

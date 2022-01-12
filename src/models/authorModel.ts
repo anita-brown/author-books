@@ -24,4 +24,4 @@ const Author = mongoose.model('Author', authorSchema)
 
 
 
-export default Author
+export default Author;

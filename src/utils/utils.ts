@@ -8,29 +8,29 @@ import mongoose from "mongoose"
 // // Export and Create interface for keys types in the object
 // // Export, Create, Read and write files to database in json format
 // const myFilePath = path.join(__dirname, '../database.json');
-const usersPath = path.join(__dirname, '../users.json');
+// const usersPath = path.join(__dirname, '../users.json');
 
 
 
-export const readUsersFile= () => {
-    try {
-        const userData = fs.readFileSync(usersPath, {encoding: "utf-8"})
-        console.log(userData)
-        return JSON.parse(userData);
-    } catch (error) {
-        console.log(error, "error occured")
-        return []
-    }
+// export const readUsersFile= () => {
+//     try {
+//         const userData = fs.readFileSync(usersPath, {encoding: "utf-8"})
+//         console.log(userData)
+//         return JSON.parse(userData);
+//     } catch (error) {
+//         console.log(error, "error occured")
+//         return []
+//     }
 
-}
+// }
 
-export const writeUsersFile = (userData: Users[]) => {
-    try {
-        fs.writeFileSync(usersPath, JSON.stringify(userData, null, 4))
-    } catch (error) {
-         console.log(error, "error occured")
-    }
-}
+// export const writeUsersFile = (userData: Users[]) => {
+//     try {
+//         fs.writeFileSync(usersPath, JSON.stringify(userData, null, 4))
+//     } catch (error) {
+//          console.log(error, "error occured")
+//     }
+// }
 
 export const validateEntry = (Author: author) => {
     const schema = Joi.object({
@@ -41,6 +41,19 @@ export const validateEntry = (Author: author) => {
     }).unknown();
     return schema.validate(Author)
 }
+
+export const validateBookEntry = (Book: books) => {
+    const schema = Joi.object({
+        authorId: Joi.string().required(),
+        bookname:  Joi.string().required(),
+        isPublished: Joi.boolean().required(),
+        datePublished: Joi.number().required(),
+        serialNumber: Joi.number().required()
+  
+    }).unknown();
+    return schema.validate(Book)
+}
+
 
 // const Joi = require('joi');
 
@@ -88,7 +101,7 @@ export const validateEntry = (Author: author) => {
 
 
 // Typescript interfaces for author, books and Users
-export interface author {
+export interface author extends mongoose.Document {
     id: string,
     author_name: string,
     age: number,
@@ -96,20 +109,32 @@ export interface author {
 }
 
 
-export interface books {
+export interface books extends mongoose.Document {
     Id: string,
     bookname: string,
     isPublished: boolean,
     datePublished: Date | null,
     serialNumber: number|null
 }
-export interface Users {
-    id? : string,
-    name: string,
+export interface users extends mongoose.Document{
+    firstName : string,
+    lastName: string,
+    DOB: Date,
     email: string,
+    phoneNumber: number,
     password: string,
-    dateOfBirth: string
-
+}
+export interface login {
+    email: string;
+    password: string;
+}
+export interface sign {
+    firstName : string,
+    lastName: string,
+    DOB: Date,
+    email: string,
+    phoneNo: number,
+    password: string,
 }
 export interface reqUser extends Request {
   user?: string

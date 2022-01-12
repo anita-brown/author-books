@@ -5,7 +5,7 @@ import * as authorController from '../controller/authorController';
 
 
 
-import { checkAuth } from '../controller/usersController';
+// import { checkAuth } from '../controller/usersController';
 
 
 const router = express.Router();

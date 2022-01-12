@@ -3,10 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.create_book = exports.getABook = void 0;
-// import { readFile, writeFile, author } from '../utils/utils';
+exports.deleteBook = exports.updateBook = exports.create_book = exports.getABook = void 0;
 const utils_1 = require("../utils/utils");
-const mySecret = 'ughyjkkoiughjkhu3jkhu748uhjki78h';
+const mySecret = "ughyjkkoiughjkhu3jkhu748uhjki78h";
 const bookModel_1 = __importDefault(require("../models/bookModel"));
 //get all books
 const getABook = (req, res) => {
@@ -27,18 +26,19 @@ exports.getABook = getABook;
 // create book
 const create_book = async (req, res) => {
     try {
-        const { error } = (0, utils_1.validateEntry)(req.body);
+        const { error } = (0, utils_1.validateBookEntry)(req.body);
         if (error) {
             return res.status(401).json({ msg: " Validation failed" });
         }
-        const { author_name, age, address } = req.body;
-        console.log(author_name);
+        res.status(201).json({ msg: " book saved...." });
+        const { authorId, bookname, isPublished, datePublished, serialNumber } = req.body;
         await bookModel_1.default.create({
-            author_name,
-            age,
-            address
+            authorId,
+            bookname,
+            isPublished,
+            datePublished,
+            serialNumber,
         });
-        res.status(201).json({ msg: " author saved...." });
     }
     catch (error) {
         console.log(error, "error occured.");
@@ -46,6 +46,43 @@ const create_book = async (req, res) => {
     }
 };
 exports.create_book = create_book;
+// update author
+const updateBook = (req, res) => {
+    //catch error from request body
+    try {
+        bookModel_1.default.findByIdAndUpdate(req.params.id, req.body, (err, books) => {
+            res.status(201).json({ msg: " book updated...." });
+            if (err)
+                return res.json(err);
+            if (books) {
+                return res.json(books);
+            }
+        });
+    }
+    catch (error) {
+        console.log(error, "error occured");
+        res.status(500).json({ msg: "Server error occured" });
+    }
+};
+exports.updateBook = updateBook;
+// delete Book
+const deleteBook = (req, res) => {
+    try {
+        bookModel_1.default.findOneAndDelete({ _id: req.params.id }, (err, books) => {
+            res.status(201).json({ msg: " book deleted...." });
+            if (err)
+                return res.json(err);
+            if (books) {
+                return res.json(books);
+            }
+        });
+    }
+    catch (error) {
+        console.log(error, "error occured");
+        res.status(500).json({ msg: "Server error occured" });
+    }
+};
+exports.deleteBook = deleteBook;
 // export const updateAuthor=(req:Request,res:Response)=>{
 // //catch error from request body
 // try {
@@ -53,7 +90,7 @@ exports.create_book = create_book;
 //     res.status(201).json({msg:" author updated...."})
 //     if(err) return res.json(err);
 //     if(authors){
-//     return res.json(authors)  
+//     return res.json(authors)
 //     }
 //     })
 // } catch (error) {
