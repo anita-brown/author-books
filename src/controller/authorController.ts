@@ -1,28 +1,16 @@
 import express, { Request, Response, NextFunction } from 'express';
-// import { readFile, writeFile, author } from '../utils/utils';
 import { validateEntry } from '../utils/utils';
 import jwt from "jsonwebtoken"
 const mySecret = 'ughyjkkoiughjkhu3jkhu748uhjki78h'
 import mongoose from "mongoose"
 import Author from "../models/authorModel"
 import joi from "joi"
-// import Author from '../models/authorModel';
 
 
 //get all authors
 
 export const getAllAuthors = async (req:Request,res:Response)=>{
     try {
-        
-    // Author.find({},async (err:any, authors:any)=>{
-    
-    // if(err) return res.json({msg:"error occur in getting all authors..."});
-
-    // if(authors){
-
-    //  res.json(authors)
-
-    // let query = await Author.find()
 
 // Filtering
 const queryObj = {...req.query}
@@ -34,13 +22,12 @@ let query =  Author.find(queryObj);
 // Pagination
 const page = +req.query.page! || 1
 const limit = +req.query.limit! || 5
+const numAuthors= await Author.countDocuments()
 const skip = (page - 1) * limit
+const numberOfPages = Math.ceil(numAuthors/limit)
+const previous =  page - 1;
+const next = page >= numberOfPages ? 0 : page + 1;
 query = query.skip(skip).limit(limit)
-
-// if(req.query.page){
-//     const numAuthors = await Author.countDocuments()
-//     if(skip > numAuthors) throw new Error('This page doesnt exist')
-// }
 
 // Execute query
     const authors = await query
@@ -48,6 +35,8 @@ query = query.skip(skip).limit(limit)
     res.status(200).json({
         status: 'success',
         result: authors.length,
+        prev: previous,
+        next: next,
         data: authors
     })
 
@@ -163,6 +152,10 @@ export const deleteAuthor = (req: Request, res: Response) => {
         console.log(error, "error occured")
     }
 }
+
+
+
+
 
 // const queryObj = {...req.query}
 // const excludedFields = ['page','sort','limit', 'fields'];

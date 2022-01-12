@@ -1,5 +1,3 @@
-import fs from 'fs';
-import path from 'path';
 import Joi from 'joi';
 import {Request} from 'express';
 import mongoose from "mongoose"
@@ -50,60 +48,6 @@ export const validateloginEntry = (User: login) => {
     }).unknown();
     return schema.validate(User)
 }
-
-
-
-
-
-
-
-
-
-
-
-// const Joi = require('joi');
-
-// const validateRequest = (schema) => async (req, res, next) => {
-//     const { error } = Joi.validate(req.body, schema);
-
-//     if (error) {  
-//       throw new Error(error);
-//     }
-
-//     return next();
-//   };
-
-// const validatinSchema =  Joi.object().keys({
-//     firstName:  Joi.string().required(),
-//     lastName: Joi.string().required(),
-//   }),
-
-// export const readFile = () => {
-//     try{
-//         const data = fs.readFileSync(myFilePath, {encoding:'utf8'})
-//         console.log(data)
-//         return JSON.parse(data);
-        
-//     }catch(error){
-//         console.log(error, "error occured")
-//         return []
-//     }
-    
-// }
-
-
-// export const writeFile = (data: author[]) =>{
-//         fs.writeFileSync(myFilePath, JSON.stringify(data, null, 4));
-
-// }
-    
-// export function getIdForBooks (booksData: books[]): books[] {
-//     return booksData.map((book: books, index) => {
-//         return {id:`book${index + 1}`, ...book}
-//     })
-// }
-
-
 
 
 // Typescript interfaces for author, books and Users

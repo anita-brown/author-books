@@ -4,19 +4,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteAuthor = exports.getAuthorById = exports.updateAuthor = exports.create_authors = exports.getAllAuthors = void 0;
-// import { readFile, writeFile, author } from '../utils/utils';
 const utils_1 = require("../utils/utils");
 const mySecret = 'ughyjkkoiughjkhu3jkhu748uhjki78h';
 const authorModel_1 = __importDefault(require("../models/authorModel"));
-// import Author from '../models/authorModel';
 //get all authors
 const getAllAuthors = async (req, res) => {
     try {
-        // Author.find({},async (err:any, authors:any)=>{
-        // if(err) return res.json({msg:"error occur in getting all authors..."});
-        // if(authors){
-        //  res.json(authors)
-        // let query = await Author.find()
         // Filtering
         const queryObj = { ...req.query };
         const excludedFields = ['page', 'sort', 'limit', 'fields'];
@@ -25,17 +18,19 @@ const getAllAuthors = async (req, res) => {
         // Pagination
         const page = +req.query.page || 1;
         const limit = +req.query.limit || 5;
+        const numAuthors = await authorModel_1.default.countDocuments();
         const skip = (page - 1) * limit;
+        const numberOfPages = Math.ceil(numAuthors / limit);
+        const previous = page - 1;
+        const next = page >= numberOfPages ? 0 : page + 1;
         query = query.skip(skip).limit(limit);
-        // if(req.query.page){
-        //     const numAuthors = await Author.countDocuments()
-        //     if(skip > numAuthors) throw new Error('This page doesnt exist')
-        // }
         // Execute query
         const authors = await query;
         res.status(200).json({
             status: 'success',
             result: authors.length,
+            prev: previous,
+            next: next,
             data: authors
         });
     }

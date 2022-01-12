@@ -8,18 +8,35 @@ const utils_1 = require("../utils/utils");
 const mySecret = "ughyjkkoiughjkhu3jkhu748uhjki78h";
 const bookModel_1 = __importDefault(require("../models/bookModel"));
 //get all books
-const getABook = (req, res) => {
+const getABook = async (req, res) => {
     try {
-        bookModel_1.default.find({}, (err, books) => {
-            if (err)
-                return res.json({ msg: "error occur in getting all authors book..." });
-            if (books) {
-                res.json(books);
-            }
+        // Filtering
+        const queryObj = { ...req.query };
+        const excludedFields = ['page', 'sort', 'limit', 'fields'];
+        excludedFields.forEach(el => delete queryObj[el]);
+        let query = bookModel_1.default.find(queryObj);
+        // Pagination
+        const page = +req.query.page || 1;
+        const limit = +req.query.limit || 5;
+        const numBooks = await bookModel_1.default.countDocuments();
+        const skip = (page - 1) * limit;
+        const numberOfPages = Math.ceil(numBooks / limit);
+        const previous = page - 1;
+        const next = page >= numberOfPages ? 0 : page + 1;
+        query = query.skip(skip).limit(limit);
+        // Execute query
+        const books = await query;
+        res.status(200).json({
+            status: 'success',
+            result: books.length,
+            prev: previous,
+            next: next,
+            data: books
         });
     }
     catch (error) {
         console.log(error, "error occured");
+        res.status(500).json({ error });
     }
 };
 exports.getABook = getABook;

@@ -7,18 +7,40 @@ import Book from "../models/bookModel";
 
 //get all books
 
-export const getABook = (req: Request, res: Response) => {
+export const getABook = async (req: Request, res: Response) => {
   try {
-    Book.find({}, (err: any, books: books) => {
-      if (err)
-        return res.json({ msg: "error occur in getting all authors book..." });
+// Filtering
+const queryObj = {...req.query}
+const excludedFields = ['page','sort','limit', 'fields'];
+excludedFields.forEach(el => delete queryObj[el])
 
-      if (books) {
-        res.json(books);
-      }
-    });
+let query =  Book.find(queryObj);
+
+// Pagination
+const page = +req.query.page! || 1
+const limit = +req.query.limit! || 5
+const numBooks= await Book.countDocuments()
+const skip = (page - 1) * limit
+const numberOfPages = Math.ceil(numBooks/limit)
+const previous =  page - 1;
+const next = page >= numberOfPages ? 0 : page + 1;
+query = query.skip(skip).limit(limit)
+
+
+// Execute query
+    const books = await query
+
+    res.status(200).json({
+        status: 'success',
+        result: books.length,
+        prev: previous,
+        next: next,
+        data: books
+    })
+    
   } catch (error) {
-    console.log(error, "error occured");
+    console.log(error, "error occured")
+    res.status(500).json({error})
   }
 };
 
