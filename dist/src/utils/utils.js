@@ -3,30 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateBookEntry = exports.validateEntry = void 0;
+exports.validateUserEntry = exports.validateBookEntry = exports.validateEntry = void 0;
 const joi_1 = __importDefault(require("joi"));
-// // import uuidv4 from 'uuidv4'
-// // Export and Create interface for keys types in the object
-// // Export, Create, Read and write files to database in json format
-// const myFilePath = path.join(__dirname, '../database.json');
-// const usersPath = path.join(__dirname, '../users.json');
-// export const readUsersFile= () => {
-//     try {
-//         const userData = fs.readFileSync(usersPath, {encoding: "utf-8"})
-//         console.log(userData)
-//         return JSON.parse(userData);
-//     } catch (error) {
-//         console.log(error, "error occured")
-//         return []
-//     }
-// }
-// export const writeUsersFile = (userData: Users[]) => {
-//     try {
-//         fs.writeFileSync(usersPath, JSON.stringify(userData, null, 4))
-//     } catch (error) {
-//          console.log(error, "error occured")
-//     }
-// }
+//  Author validation with joi
 const validateEntry = (Author) => {
     const schema = joi_1.default.object({
         author_name: joi_1.default.string().required(),
@@ -36,6 +15,7 @@ const validateEntry = (Author) => {
     return schema.validate(Author);
 };
 exports.validateEntry = validateEntry;
+//  Book validation with joi
 const validateBookEntry = (Book) => {
     const schema = joi_1.default.object({
         authorId: joi_1.default.string().required(),
@@ -47,3 +27,16 @@ const validateBookEntry = (Book) => {
     return schema.validate(Book);
 };
 exports.validateBookEntry = validateBookEntry;
+//  User validation with joi
+const validateUserEntry = (User) => {
+    const schema = joi_1.default.object({
+        firstName: joi_1.default.string().required(),
+        lastName: joi_1.default.string().required(),
+        DOB: joi_1.default.string().required(),
+        email: joi_1.default.string().required(),
+        phoneNumber: joi_1.default.string().required(),
+        password: joi_1.default.string().required()
+    }).unknown();
+    return schema.validate(User);
+};
+exports.validateUserEntry = validateUserEntry;

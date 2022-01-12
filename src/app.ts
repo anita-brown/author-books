@@ -7,7 +7,7 @@ import logger from 'morgan';
 // import mongoose from "mongoose";
 import authorRouter from './routes/authorRoute'
 import bookRouter from './routes/bookRoute'
-import usersRouter from './routes/users';
+import usersRouter from './routes/usersRoute';
 import cors from 'cors';
 const corsOptions = {
   origin: ["http://localhost:3000","http://localhost:5500"],
@@ -50,7 +50,7 @@ app.use(cors(corsOptions));
 
 // app.use('/posts', postRouter);
 app.use('/book', bookRouter);
-app.use('/users', usersRouter);
+app.use('/user', usersRouter);
 app.use('/author', authorRouter);
 
 // catch 404 and forward to error handler

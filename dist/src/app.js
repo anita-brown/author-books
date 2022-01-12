@@ -11,7 +11,7 @@ const morgan_1 = __importDefault(require("morgan"));
 // import mongoose from "mongoose";
 const authorRoute_1 = __importDefault(require("./routes/authorRoute"));
 const bookRoute_1 = __importDefault(require("./routes/bookRoute"));
-const users_1 = __importDefault(require("./routes/users"));
+const usersRoute_1 = __importDefault(require("./routes/usersRoute"));
 const cors_1 = __importDefault(require("cors"));
 const corsOptions = {
     origin: ["http://localhost:3000", "http://localhost:5500"],
@@ -39,7 +39,7 @@ app.use((0, cors_1.default)(corsOptions));
 //Mongo Connection
 // app.use('/posts', postRouter);
 app.use('/book', bookRoute_1.default);
-app.use('/users', users_1.default);
+app.use('/user', usersRoute_1.default);
 app.use('/author', authorRoute_1.default);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

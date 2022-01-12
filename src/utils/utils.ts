@@ -4,34 +4,8 @@ import Joi from 'joi';
 import {Request} from 'express';
 import mongoose from "mongoose"
 
-// // import uuidv4 from 'uuidv4'
-// // Export and Create interface for keys types in the object
-// // Export, Create, Read and write files to database in json format
-// const myFilePath = path.join(__dirname, '../database.json');
-// const usersPath = path.join(__dirname, '../users.json');
 
-
-
-// export const readUsersFile= () => {
-//     try {
-//         const userData = fs.readFileSync(usersPath, {encoding: "utf-8"})
-//         console.log(userData)
-//         return JSON.parse(userData);
-//     } catch (error) {
-//         console.log(error, "error occured")
-//         return []
-//     }
-
-// }
-
-// export const writeUsersFile = (userData: Users[]) => {
-//     try {
-//         fs.writeFileSync(usersPath, JSON.stringify(userData, null, 4))
-//     } catch (error) {
-//          console.log(error, "error occured")
-//     }
-// }
-
+//  Author validation with joi
 export const validateEntry = (Author: author) => {
     const schema = Joi.object({
         author_name: Joi.string().required(),
@@ -42,6 +16,7 @@ export const validateEntry = (Author: author) => {
     return schema.validate(Author)
 }
 
+//  Book validation with joi
 export const validateBookEntry = (Book: books) => {
     const schema = Joi.object({
         authorId: Joi.string().required(),
@@ -53,6 +28,30 @@ export const validateBookEntry = (Book: books) => {
     }).unknown();
     return schema.validate(Book)
 }
+
+//  User validation with joi
+export const validateUserEntry = (User: users) => {
+    const schema = Joi.object({
+        firstName: Joi.string().required(),
+        lastName:  Joi.string().required(),
+        DOB: Joi.string().required(),
+        email: Joi.string().required(),
+        phoneNumber: Joi.string().required(),
+        password: Joi.string().required()
+  
+    }).unknown();
+    return schema.validate(User)
+}
+
+
+
+
+
+
+
+
+
+
 
 
 // const Joi = require('joi');

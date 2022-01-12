@@ -9,17 +9,14 @@ exports.userSchema = new mongoose_1.default.Schema({
     firstName: {
         type: String,
         required: [true, 'An author must have a first name'],
-        unique: true
     },
     lastName: {
         type: String,
         required: [true, 'An author must have a last name'],
-        unique: true
     },
     DOB: {
         type: String,
-        required: [true, 'An author must have a valid DOB'],
-        unique: true
+        required: [true, 'An author must have a valid DOB']
     },
     email: {
         type: String,
@@ -27,9 +24,13 @@ exports.userSchema = new mongoose_1.default.Schema({
         unique: true
     },
     phoneNumber: {
-        type: Number,
+        type: String,
         required: [true, 'An author must have a valid phone number'],
         unique: true
+    },
+    password: {
+        type: String,
+        required: [true, 'Put in strong password'],
     }
 }, { timestamps: true });
 const User = mongoose_1.default.model('User', exports.userSchema);

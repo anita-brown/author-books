@@ -3,8 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllUsers = void 0;
+exports.signUp = exports.getAllUsers = void 0;
 const userModel_1 = __importDefault(require("../models/userModel"));
+const utils_1 = require("../utils/utils");
 const mySecret = "ughyjkkoiughjkhu3jkhu748uhjki78h";
 // get all Users
 const getAllUsers = (req, res) => {
@@ -23,6 +24,24 @@ const getAllUsers = (req, res) => {
     }
 };
 exports.getAllUsers = getAllUsers;
+// Sign up
+const signUp = async (req, res) => {
+    try {
+        const { error } = (0, utils_1.validateUserEntry)(req.body);
+        if (error) {
+            return res.status(401).json({ msg: " Validation failed" });
+        }
+        console.log(req.body);
+        const { firstName, lastName, DOB, email, phoneNumber, password } = req.body;
+        const data = await userModel_1.default.create({ firstName, lastName, DOB, email, phoneNumber, password });
+        res.status(201).json({ status: "success", data });
+    }
+    catch (error) {
+        console.log(error, "error occured.");
+        res.status(500).json({ error });
+    }
+};
+exports.signUp = signUp;
 // export const getAllUsers = (req: Request, res: Response) => {
 //   const userData = readUsersFile();
 //   res.status(200).json({ message: "succesfull", userData });
