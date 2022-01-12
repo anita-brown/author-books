@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userSchema = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 exports.userSchema = new mongoose_1.default.Schema({
     firstName: {
         type: String,
@@ -31,7 +32,12 @@ exports.userSchema = new mongoose_1.default.Schema({
     password: {
         type: String,
         required: [true, 'Put in strong password'],
+        select: false
     }
 }, { timestamps: true });
+// 
+exports.userSchema.pre("save", async function () {
+    this.password = await bcrypt_1.default.hash(this.password, 10);
+});
 const User = mongoose_1.default.model('User', exports.userSchema);
 exports.default = User;

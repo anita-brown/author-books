@@ -14,16 +14,15 @@ const mySecret = "ughyjkkoiughjkhu3jkhu748uhjki78h";
 
 export const getAllUsers = (req: Request, res: Response) => {
   try {
-    User.find({}, (err: any, users: reqUser) => {
+  const data =  User.find({}, (err: any, users: reqUser) => {
       if (err) return res.json({ msg: "error occur in getting all users..." });
-
       if (users) {
         res.json(users);
       }
     });
   } catch (error) {
-    console.log(error, "error occured");
-    res.status(500).json({ msg: "Server error occured" });
+    console.log(error, "error occured.");
+    res.status(500).json({error});
   }
 };
 
@@ -35,15 +34,27 @@ export const signUp = async (req: Request, res: Response) => {
     if (error) {
       return res.status(401).json({ msg: " Validation failed" });
     }
-
-    
     console.log(req.body)
     const {firstName, lastName, DOB, email, phoneNumber, password} = req.body;
     const data = await User.create({firstName, lastName, DOB, email, phoneNumber, password});
     
-    res.status(201).json({ status: "success", data });
+    const token = await jwt.sign(
+            {
+              email,
+            },
+            mySecret,
+            {
+              expiresIn: "30d",
+            }
+          );
+      
+          res.json({
+            token,
+          });
+    res.status(201).json({ status: "success", token, data });
+
   } 
-  catch (error) 
+  catch (error)
   {
     console.log(error, "error occured.");
 

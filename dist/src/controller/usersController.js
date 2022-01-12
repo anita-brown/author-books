@@ -4,13 +4,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.signUp = exports.getAllUsers = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const userModel_1 = __importDefault(require("../models/userModel"));
 const utils_1 = require("../utils/utils");
 const mySecret = "ughyjkkoiughjkhu3jkhu748uhjki78h";
 // get all Users
 const getAllUsers = (req, res) => {
     try {
-        userModel_1.default.find({}, (err, users) => {
+        const data = userModel_1.default.find({}, (err, users) => {
             if (err)
                 return res.json({ msg: "error occur in getting all users..." });
             if (users) {
@@ -19,8 +20,8 @@ const getAllUsers = (req, res) => {
         });
     }
     catch (error) {
-        console.log(error, "error occured");
-        res.status(500).json({ msg: "Server error occured" });
+        console.log(error, "error occured.");
+        res.status(500).json({ error });
     }
 };
 exports.getAllUsers = getAllUsers;
@@ -34,7 +35,15 @@ const signUp = async (req, res) => {
         console.log(req.body);
         const { firstName, lastName, DOB, email, phoneNumber, password } = req.body;
         const data = await userModel_1.default.create({ firstName, lastName, DOB, email, phoneNumber, password });
-        res.status(201).json({ status: "success", data });
+        const token = await jsonwebtoken_1.default.sign({
+            email,
+        }, mySecret, {
+            expiresIn: "30d",
+        });
+        res.json({
+            token,
+        });
+        res.status(201).json({ status: "success", token, data });
     }
     catch (error) {
         console.log(error, "error occured.");

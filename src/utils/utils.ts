@@ -37,7 +37,7 @@ export const validateUserEntry = (User: users) => {
         DOB: Joi.string().required(),
         email: Joi.string().required(),
         phoneNumber: Joi.string().required(),
-        password: Joi.string().required()
+        password: Joi.string().required().min(8)
   
     }).unknown();
     return schema.validate(User)

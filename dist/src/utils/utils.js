@@ -35,7 +35,7 @@ const validateUserEntry = (User) => {
         DOB: joi_1.default.string().required(),
         email: joi_1.default.string().required(),
         phoneNumber: joi_1.default.string().required(),
-        password: joi_1.default.string().required()
+        password: joi_1.default.string().required().min(8)
     }).unknown();
     return schema.validate(User);
 };

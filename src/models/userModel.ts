@@ -1,5 +1,6 @@
 import mongoose from "mongoose"
 
+import bcrypt from "bcrypt";
 
 export const userSchema = new mongoose.Schema({
     firstName: {
@@ -33,6 +34,7 @@ export const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: [true, 'Put in strong password'],
+        select: false
     }
 
 
@@ -40,7 +42,10 @@ export const userSchema = new mongoose.Schema({
     { timestamps: true }
 
 )
-
+// 
+userSchema.pre("save", async function(){
+    this.password = await bcrypt.hash(this.password, 10);
+})
 const User = mongoose.model('User', userSchema)
 
 
