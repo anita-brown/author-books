@@ -1,5 +1,4 @@
 import express, { NextFunction, Request, Response } from "express";
-// import { readUsersFile, writeUsersFile, Users, reqUser } from "../utils/utils";
 import { check, validationResult } from "express-validator";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -7,7 +6,7 @@ import uuid4 from "uuid4";
 import mongoose from "mongoose";
 import User from "../models/userModel";
 import { reqUser } from "../utils/utils";
-import { validateUserEntry } from "../utils/utils";
+import { validateUserEntry, validateloginEntry } from "../utils/utils";
 const mySecret = "ughyjkkoiughjkhu3jkhu748uhjki78h";
 
 // get all Users
@@ -32,7 +31,7 @@ export const signUp = async (req: Request, res: Response) => {
   try {
     const { error } = validateUserEntry(req.body);
     if (error) {
-      return res.status(401).json({ msg: " Validation failed" });
+      return res.status(401).json({ msg: "Validation failed..." });
     }
     console.log(req.body)
     const {firstName, lastName, DOB, email, phoneNumber, password} = req.body;
@@ -61,6 +60,72 @@ export const signUp = async (req: Request, res: Response) => {
     res.status(500).json({error});
   }
 };
+
+
+
+// Login 
+
+export const logIn = async (req: Request, res: Response) => {
+  try {
+    console.log(req.body)
+    const { error } = validateloginEntry(req.body);
+    if (error) {
+      return res.status(401).json({ msg: "Validation failed..." });
+    }
+    const {email,password} = req.body;
+    const data = await User.findOne({email}).select('+password')
+
+
+      let isMatch = await bcrypt.compare(password, data.password);
+  if (!isMatch) {
+    return res.status(400).json({
+      errors: [
+        {
+          msg: "Invalid Credentials",
+        },
+      ],
+    });
+  }
+
+    const token = await jwt.sign(
+            {
+              email,
+            },
+            mySecret,
+            {
+              expiresIn: "30d",
+            }
+          );
+      
+          res.json({
+            token,
+          });
+    res.status(201).json({ status: "success", token, data });
+
+  } 
+  catch (error)
+  {
+    console.log(error, "error occured.");
+
+    res.status(500).json({error});
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // export const getAllUsers = (req: Request, res: Response) => {
 //   const userData = readUsersFile();

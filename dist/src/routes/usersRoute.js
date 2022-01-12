@@ -11,6 +11,7 @@ const router = express_1.default.Router();
 /* GET users listing. */
 router.get("/", usersController_1.getAllUsers);
 router.post("/signup", usersController_1.signUp);
+router.post("/login", usersController_1.logIn);
 // router.get("/", checkAuth, usersController.getAllUsers);
 // router.post("/signup", usersController.signUp);
 // router.post("/login", usersController.logIn)

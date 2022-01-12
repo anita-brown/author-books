@@ -42,7 +42,14 @@ export const validateUserEntry = (User: users) => {
     }).unknown();
     return schema.validate(User)
 }
-
+export const validateloginEntry = (User: login) => {
+    const schema = Joi.object({
+       email: Joi.string().required(),
+        password: Joi.string().required().min(8)
+  
+    }).unknown();
+    return schema.validate(User)
+}
 
 
 

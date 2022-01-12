@@ -8,20 +8,40 @@ exports.deleteAuthor = exports.getAuthorById = exports.updateAuthor = exports.cr
 const utils_1 = require("../utils/utils");
 const mySecret = 'ughyjkkoiughjkhu3jkhu748uhjki78h';
 const authorModel_1 = __importDefault(require("../models/authorModel"));
+// import Author from '../models/authorModel';
 //get all authors
-const getAllAuthors = (req, res) => {
+const getAllAuthors = async (req, res) => {
     try {
-        authorModel_1.default.find({}, (err, authors) => {
-            if (err)
-                return res.json({ msg: "error occur in getting all authors..." });
-            if (authors) {
-                res.json(authors);
-            }
+        // Author.find({},async (err:any, authors:any)=>{
+        // if(err) return res.json({msg:"error occur in getting all authors..."});
+        // if(authors){
+        //  res.json(authors)
+        // let query = await Author.find()
+        // Filtering
+        const queryObj = { ...req.query };
+        const excludedFields = ['page', 'sort', 'limit', 'fields'];
+        excludedFields.forEach(el => delete queryObj[el]);
+        let query = authorModel_1.default.find(queryObj);
+        // Pagination
+        const page = +req.query.page || 1;
+        const limit = +req.query.limit || 5;
+        const skip = (page - 1) * limit;
+        query = query.skip(skip).limit(limit);
+        // if(req.query.page){
+        //     const numAuthors = await Author.countDocuments()
+        //     if(skip > numAuthors) throw new Error('This page doesnt exist')
+        // }
+        // Execute query
+        const authors = await query;
+        res.status(200).json({
+            status: 'success',
+            result: authors.length,
+            data: authors
         });
     }
     catch (error) {
         console.log(error, "error occured");
-        res.status(500).json({ msg: "Server error occured" });
+        res.status(500).json({ error });
     }
 };
 exports.getAllAuthors = getAllAuthors;
@@ -99,6 +119,21 @@ const deleteAuthor = (req, res) => {
     }
 };
 exports.deleteAuthor = deleteAuthor;
+// const queryObj = {...req.query}
+// const excludedFields = ['page','sort','limit', 'fields'];
+// excludedFields.forEach(el => delete queryObj[el]))
+// let query =  Author.find(queryObj);
+// // Pagination
+// const page = +req.query.page || 1
+// const limit = req.query.limit || 3
+// const skip = (page - 1) * limit
+// query = query.skip(skip).limit(limit)
+// if(req.query.page){
+//     const numAuthors = await Author.countDocuments()
+//     if(skip > numAuthors) throw new Error('This page doesnt exist')
+// }
+// // Execute query
+// const authors = await query
 // export const getAllAuthors = (req: any, res: Response, next: NextFunction) => {
 //     jwt.verify(req.token, mySecret, (err: any, data: any) => {
 //         if (err) {

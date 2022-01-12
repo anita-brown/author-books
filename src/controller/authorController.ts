@@ -6,27 +6,55 @@ const mySecret = 'ughyjkkoiughjkhu3jkhu748uhjki78h'
 import mongoose from "mongoose"
 import Author from "../models/authorModel"
 import joi from "joi"
+// import Author from '../models/authorModel';
 
 
 //get all authors
 
-export const getAllAuthors =(req:Request,res:Response)=>{
+export const getAllAuthors = async (req:Request,res:Response)=>{
     try {
         
-    Author.find({},(err:any, authors:any)=>{
+    // Author.find({},async (err:any, authors:any)=>{
     
-    if(err) return res.json({msg:"error occur in getting all authors..."});
+    // if(err) return res.json({msg:"error occur in getting all authors..."});
 
-    if(authors){
+    // if(authors){
 
-     res.json(authors)
-    }
+    //  res.json(authors)
+
+    // let query = await Author.find()
+
+// Filtering
+const queryObj = {...req.query}
+const excludedFields = ['page','sort','limit', 'fields'];
+excludedFields.forEach(el => delete queryObj[el])
+
+let query =  Author.find(queryObj);
+
+// Pagination
+const page = +req.query.page! || 1
+const limit = +req.query.limit! || 5
+const skip = (page - 1) * limit
+query = query.skip(skip).limit(limit)
+
+// if(req.query.page){
+//     const numAuthors = await Author.countDocuments()
+//     if(skip > numAuthors) throw new Error('This page doesnt exist')
+// }
+
+// Execute query
+    const authors = await query
+
+    res.status(200).json({
+        status: 'success',
+        result: authors.length,
+        data: authors
     })
-    } catch (error) {
-         console.log(error, "error occured")
-         res.status(500).json({msg: "Server error occured"})
-    }
 
+} catch (error) {
+         console.log(error, "error occured")
+         res.status(500).json({error})
+    }
 }
 
 //create authors details
@@ -135,6 +163,27 @@ export const deleteAuthor = (req: Request, res: Response) => {
         console.log(error, "error occured")
     }
 }
+
+// const queryObj = {...req.query}
+// const excludedFields = ['page','sort','limit', 'fields'];
+// excludedFields.forEach(el => delete queryObj[el]))
+// let query =  Author.find(queryObj);
+// // Pagination
+// const page = +req.query.page || 1
+// const limit = req.query.limit || 3
+// const skip = (page - 1) * limit
+// query = query.skip(skip).limit(limit)
+
+// if(req.query.page){
+//     const numAuthors = await Author.countDocuments()
+//     if(skip > numAuthors) throw new Error('This page doesnt exist')
+// }
+
+// // Execute query
+// const authors = await query
+
+
+
 
 // export const getAllAuthors = (req: any, res: Response, next: NextFunction) => {
 
