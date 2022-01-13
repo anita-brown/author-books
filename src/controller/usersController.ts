@@ -31,7 +31,7 @@ export const signUp = async (req: Request, res: Response) => {
   try {
     const { error } = validateUserEntry(req.body);
     if (error) {
-      return res.status(401).json({ msg: "Validation failed..." });
+      return res.status(400).json({ msg: "Validation failed..." });
     }
     console.log(req.body)
     const {firstName, lastName, DOB, email, phoneNumber, password} = req.body;

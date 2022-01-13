@@ -3,35 +3,48 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mongoTestDB = exports.mongoConnectDB = void 0;
+exports.clearDb = exports.closeDb = exports.connectDb = void 0;
 // import mongoose from "mongoose";
 const mongoose_1 = __importDefault(require("mongoose"));
 const mongodb_memory_server_1 = require("mongodb-memory-server");
-// import dotenv from 'dotenv';
-// dotenv.config()
-const mongoConnectDB = () => {
+let memoryServerConnection = mongoose_1.default.connection;
+let memoryServer = new mongodb_memory_server_1.MongoMemoryServer();
+const connectDb = async () => {
     try {
-        mongoose_1.default.connect(process.env.DB_URL).then(() => {
-            console.log("Connected to DB");
+        await memoryServer.start();
+        const uri = memoryServer.getUri();
+        mongoose_1.default.connect(uri);
+        memoryServerConnection.on('connection', () => {
+            console.log('mem-server connected successfully');
+        });
+        memoryServerConnection.on('error', () => {
+            console.log('memory server could not connect.');
         });
     }
     catch (error) {
         console.log(error);
+        process.exit(1);
     }
 };
-exports.mongoConnectDB = mongoConnectDB;
-const mongoTestDB = () => {
+exports.connectDb = connectDb;
+const closeDb = async () => {
     try {
-        mongodb_memory_server_1.MongoMemoryServer.create().then((mongo) => {
-            const uri = mongo.getUri();
-            mongoose_1.default.connect(uri).then(() => {
-                console.log("connected to mongoTestDB");
-            });
-        });
-        const memoryServer = mongodb_memory_server_1.MongoMemoryServer.create();
+        await memoryServerConnection.dropDatabase();
+        await memoryServerConnection.close();
+        await memoryServer.stop();
     }
     catch (error) {
         console.log(error);
+        console.log('error occurred in closeDb');
     }
 };
-exports.mongoTestDB = mongoTestDB;
+exports.closeDb = closeDb;
+const clearDb = async () => {
+    try {
+        await memoryServerConnection.dropDatabase();
+    }
+    catch (error) {
+        console.log('error occurred while closing database');
+    }
+};
+exports.clearDb = clearDb;

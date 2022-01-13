@@ -33,7 +33,7 @@ const validateUserEntry = (User) => {
         firstName: joi_1.default.string().required(),
         lastName: joi_1.default.string().required(),
         DOB: joi_1.default.string().required(),
-        email: joi_1.default.string().required(),
+        email: joi_1.default.string().email().required(),
         phoneNumber: joi_1.default.string().required(),
         password: joi_1.default.string().required().min(8)
     }).unknown();
