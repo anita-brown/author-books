@@ -37,6 +37,7 @@ export const signUp = async (req: Request, res: Response) => {
     const {firstName, lastName, DOB, email, phoneNumber, password} = req.body;
     const data = await User.create({firstName, lastName, DOB, email, phoneNumber, password});
     
+    console.log(data)
     const token = await jwt.sign(
             {
               email,
@@ -47,9 +48,6 @@ export const signUp = async (req: Request, res: Response) => {
             }
           );
       
-          res.json({
-            token,
-          });
     res.status(201).json({ status: "success", token, data });
 
   } 
@@ -97,9 +95,6 @@ export const logIn = async (req: Request, res: Response) => {
             }
           );
       
-          res.json({
-            token,
-          });
     res.status(201).json({ status: "success", token, data });
 
   } 
@@ -112,6 +107,55 @@ export const logIn = async (req: Request, res: Response) => {
 };
 
 
+
+// //  Authentication custom middleware
+export const checkAuth = async (
+  req: reqUser,
+  res: Response,
+  next: NextFunction
+  ) => {
+  try {
+  if (!req.headers.authorization) {
+    return res.status(400).json({
+      error: [
+        {
+          msg: "No token found!!",
+        },
+      ],
+    });
+  }
+
+  const token = req.headers.authorization.split(" ")[1];
+
+  if (!token) {
+    return res.status(400).json({
+      error: [
+        {
+          msg: "No token found",
+        },
+      ],
+    });
+  }
+    let user = (await jwt.verify(
+      token,
+      "ughyjkkoiughjkhu3jkhu748uhjki78h"
+    )) as { [key: string]: string };
+    // console.log(user)
+    req.user = user.email;
+    req.user = user.hashedPassword;
+
+    next();
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      errors: [
+        {
+          msg: "Token invalid",
+        },
+      ],
+    });
+  }
+};
 
 
 

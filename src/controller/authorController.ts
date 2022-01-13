@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { validateEntry } from '../utils/utils';
+import { author, validateEntry } from '../utils/utils';
 import jwt from "jsonwebtoken"
 const mySecret = 'ughyjkkoiughjkhu3jkhu748uhjki78h'
 import mongoose from "mongoose"
@@ -81,28 +81,45 @@ console.log(author_name)
 
 // update author
 
-export const updateAuthor=(req:Request,res:Response)=>{
+// export const updateAuthor=(req:Request,res:Response)=>{
 
-//catch error from request body
-try {
+// //catch error from request body
+// try {
 
-    Author.findByIdAndUpdate(req.params.id, req.body,(err:any, authors:string)=>{
+//     const author = Author.findOneAndUpdate({_id:req.params.id}, req.body, {
+//         new: true})
 
-    res.status(201).json({msg:" author updated...."})
+//     if(!author){
+//         return res.status(401).json({message: `author with id ${req.params.id} does not exist`})  
+//     }
+//     console.log(author)
+//     res.status(201).json({msg:" author updated...."})
     
-    if(err) return res.json(err);
+//     } 
+//     catch (error) {
+//         console.log(error, "error occured")
+//      res.status(500).json({error})
+//     }
 
-    if(authors){
- 
-    return res.json(authors)  
+// }
+
+export async function updateAuthor(req: Request, res: Response){
+    const {  author_name, age, address } = req.body
+    const { id } = req.params
+    const author = await Author.findOne({_id: id})
+    if(!author){
+        res.status(404).json({
+            error: 'Author not found'
+        })
     }
-
+    author_name && (author!.author_name = author_name)
+    age && (author!.age = age)
+    address && (author!.address = address)
+    const updatedAuthor = await author!.save()
+    res.json({
+        msg: 'Updated successfully',
+        updatedAuthor: updatedAuthor
     })
-    
-} catch (error) {
-     console.log(error, "error occured")
-}
-
 }
 
 
@@ -126,6 +143,7 @@ try {
     })
 } catch (error) {
     console.log(error, "error occured")
+    res.status(500).json({error});
     
 }
 

@@ -4,20 +4,28 @@ require("dotenv").config()
  * Module dependencies.
  */
 //  import mongoConnection from "../src/database/mongoConnection";
- const  {mongoConnectDB, mongoTestDB } = require( '../src/database/mongoConnect.ts')
+const mongoose = require("mongoose")
+// const {mongoConnectDB, mongoTestDB} = require('../dist/src/database/db')
+const  {mongoTestDB} = require( '../dist/src/database/db')
  var app = require('../dist/src/app').default;
  var debug = require('debug')('week-6-task:server');
  var http = require('http');
- const mongoose = require("mongoose")
  
- mongoose.connect(process.env.DB_URL).then(()  => {
-   console.log("MongoDB connected")
-  }).catch((err) => console.log(err, "An Error occurred connecting to mongoDB..."))
+ console.log(process.env.NODE_ENV)
+ if(process.env.NODE_ENV === 'test'){
+  mongoTestDB()
+ }
+ else{
+  mongoose.connect(process.env.DB_URL).then(()  => {
+    console.log("MongoDB connected")
+   }).catch((err) => console.log(err, "An Error occurred connecting to mongoDB..."))
+ }
+ 
   /**
    * Get port from environment and store in Express.
    */
   
-  var port = normalizePort(process.env.PORT || '3008');
+  var port = normalizePort(process.env.PORT || '3000');
   app.set('port', port);
   
   /**
@@ -59,7 +67,7 @@ require("dotenv").config()
   /**
    * Event listener for HTTP server "error" event.
    */
-  console.log(process.env.Node_ENV)
+
   
   function onError(error) {
     if (error.syscall !== 'listen') {

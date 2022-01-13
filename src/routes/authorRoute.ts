@@ -1,40 +1,26 @@
 import express, {NextFunction, Request, Response} from 'express';
 
 
-import * as authorController from '../controller/authorController';
+import {getAllAuthors, getAuthorById, create_authors, updateAuthor, deleteAuthor} from '../controller/authorController';
 
 
-
-// import { checkAuth } from '../controller/usersController';
+import { checkAuth } from '../controller/usersController';
 
 
 const router = express.Router();
 
+router.get('/', checkAuth, getAllAuthors) 
 
-router.post("/create_authors",authorController.create_authors);
+router.get('/:id', checkAuth,getAuthorById)
 
+router.post("/create_authors",checkAuth,create_authors);
 
-router.get('/',authorController.getAllAuthors) 
-
-
-router.put('/:id', authorController.updateAuthor)
-
-router.get('/:id', authorController.getAuthorById)
-
-router.delete('/:id',authorController.deleteAuthor)
+router.put('/:id', checkAuth,updateAuthor)
 
 
+router.delete('/:id',checkAuth,deleteAuthor)
 
 
-
-
-
-// router.post('/', checkAuth, authorController.postAuthor)
-
-// router.get('/:authorId/book/:bookId', getABook)
-// router.post('/:authorId/add-book', postBook)
-// router.put('/:authorId/book/:bookId', updateBook)
-// router.delete('/:authorId/book/:bookId', deleteBook)
 
 
 export default router;

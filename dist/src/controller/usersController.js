@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logIn = exports.signUp = exports.getAllUsers = void 0;
+exports.checkAuth = exports.logIn = exports.signUp = exports.getAllUsers = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const userModel_1 = __importDefault(require("../models/userModel"));
@@ -36,13 +36,11 @@ const signUp = async (req, res) => {
         console.log(req.body);
         const { firstName, lastName, DOB, email, phoneNumber, password } = req.body;
         const data = await userModel_1.default.create({ firstName, lastName, DOB, email, phoneNumber, password });
+        console.log(data);
         const token = await jsonwebtoken_1.default.sign({
             email,
         }, mySecret, {
             expiresIn: "30d",
-        });
-        res.json({
-            token,
         });
         res.status(201).json({ status: "success", token, data });
     }
@@ -77,9 +75,6 @@ const logIn = async (req, res) => {
         }, mySecret, {
             expiresIn: "30d",
         });
-        res.json({
-            token,
-        });
         res.status(201).json({ status: "success", token, data });
     }
     catch (error) {
@@ -88,6 +83,46 @@ const logIn = async (req, res) => {
     }
 };
 exports.logIn = logIn;
+// //  Authentication custom middleware
+const checkAuth = async (req, res, next) => {
+    try {
+        if (!req.headers.authorization) {
+            return res.status(400).json({
+                error: [
+                    {
+                        msg: "No token found!!",
+                    },
+                ],
+            });
+        }
+        const token = req.headers.authorization.split(" ")[1];
+        if (!token) {
+            return res.status(400).json({
+                error: [
+                    {
+                        msg: "No token found",
+                    },
+                ],
+            });
+        }
+        let user = (await jsonwebtoken_1.default.verify(token, "ughyjkkoiughjkhu3jkhu748uhjki78h"));
+        // console.log(user)
+        req.user = user.email;
+        req.user = user.hashedPassword;
+        next();
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            errors: [
+                {
+                    msg: "Token invalid",
+                },
+            ],
+        });
+    }
+};
+exports.checkAuth = checkAuth;
 // export const getAllUsers = (req: Request, res: Response) => {
 //   const userData = readUsersFile();
 //   res.status(200).json({ message: "succesfull", userData });

@@ -1,4 +1,21 @@
 "use strict";
+// import supertest from "supertest";
+// import app from "../src/app";
+// describe("Auth", () => {
+//   const data = {
+//     firstName: "lifted",
+//     lastName: "Mayo",
+//     DOB: "12-01-2001",
+//     email: "lifted@gmail.com",
+//     phoneNo: "090899566759",
+//     password: "password",
+//   };
+//   test("signup", async () => {
+//     const response = await supertest(app).post("/user/signup").send(data);
+//     expect(response.status).toBe(201);
+//     expect(response.body.message).toBe("Signup successful");
+//     expect(response.body.data.user.email).toBe(data.email);
+//   });
 // import supertest from 'supertest'
 // import app from '../src/app'
 // describe('GET AUTHORS', () => {

@@ -3,12 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteBook = exports.updateBook = exports.create_book = exports.getABook = void 0;
+exports.deleteBook = exports.updateBook = exports.create_book = exports.getAllBooks = void 0;
 const utils_1 = require("../utils/utils");
 const mySecret = "ughyjkkoiughjkhu3jkhu748uhjki78h";
 const bookModel_1 = __importDefault(require("../models/bookModel"));
 //get all books
-const getABook = async (req, res) => {
+const getAllBooks = async (req, res) => {
     try {
         // Filtering
         const queryObj = { ...req.query };
@@ -17,7 +17,7 @@ const getABook = async (req, res) => {
         let query = bookModel_1.default.find(queryObj);
         // Pagination
         const page = +req.query.page || 1;
-        const limit = +req.query.limit || 5;
+        const limit = +req.query.limit || 10;
         const numBooks = await bookModel_1.default.countDocuments();
         const skip = (page - 1) * limit;
         const numberOfPages = Math.ceil(numBooks / limit);
@@ -39,23 +39,32 @@ const getABook = async (req, res) => {
         res.status(500).json({ error });
     }
 };
-exports.getABook = getABook;
+exports.getAllBooks = getAllBooks;
 // create book
 const create_book = async (req, res) => {
     try {
-        const { error } = (0, utils_1.validateBookEntry)(req.body);
+        const { error, value } = (0, utils_1.validateBookEntry)(req.body);
         if (error) {
-            return res.status(401).json({ msg: " Validation failed" });
+            res.status(401).json({ msg: " Validation failed" });
         }
-        res.status(201).json({ msg: " book saved...." });
-        const { authorId, bookname, isPublished, datePublished, serialNumber } = req.body;
-        await bookModel_1.default.create({
-            authorId,
-            bookname,
-            isPublished,
-            datePublished,
-            serialNumber,
-        });
+        else {
+            // const { authorId, bookname, isPublished, datePublished, serialNumber } =
+            //   req.body;
+            let newBook = await bookModel_1.default.create(value);
+            // await Book.create({
+            //   authorId,
+            //   bookname,
+            //   isPublished,
+            //   datePublished,
+            //   serialNumber,
+            // });
+            res.status(201).json({
+                msg: " book saved....",
+                data: {
+                    newBook
+                }
+            });
+        }
     }
     catch (error) {
         console.log(error, "error occured.");

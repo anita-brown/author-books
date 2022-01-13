@@ -63,22 +63,40 @@ const create_authors = async (req, res) => {
 };
 exports.create_authors = create_authors;
 // update author
-const updateAuthor = (req, res) => {
-    //catch error from request body
-    try {
-        authorModel_1.default.findByIdAndUpdate(req.params.id, req.body, (err, authors) => {
-            res.status(201).json({ msg: " author updated...." });
-            if (err)
-                return res.json(err);
-            if (authors) {
-                return res.json(authors);
-            }
+// export const updateAuthor=(req:Request,res:Response)=>{
+// //catch error from request body
+// try {
+//     const author = Author.findOneAndUpdate({_id:req.params.id}, req.body, {
+//         new: true})
+//     if(!author){
+//         return res.status(401).json({message: `author with id ${req.params.id} does not exist`})  
+//     }
+//     console.log(author)
+//     res.status(201).json({msg:" author updated...."})
+//     } 
+//     catch (error) {
+//         console.log(error, "error occured")
+//      res.status(500).json({error})
+//     }
+// }
+async function updateAuthor(req, res) {
+    const { author_name, age, address } = req.body;
+    const { id } = req.params;
+    const author = await authorModel_1.default.findOne({ _id: id });
+    if (!author) {
+        res.status(404).json({
+            error: 'Author not found'
         });
     }
-    catch (error) {
-        console.log(error, "error occured");
-    }
-};
+    author_name && (author.author_name = author_name);
+    age && (author.age = age);
+    address && (author.address = address);
+    const updatedAuthor = await author.save();
+    res.json({
+        msg: 'Updated successfully',
+        updatedAuthor: updatedAuthor
+    });
+}
 exports.updateAuthor = updateAuthor;
 //get author by id
 const getAuthorById = (req, res) => {
@@ -94,6 +112,7 @@ const getAuthorById = (req, res) => {
     }
     catch (error) {
         console.log(error, "error occured");
+        res.status(500).json({ error });
     }
 };
 exports.getAuthorById = getAuthorById;

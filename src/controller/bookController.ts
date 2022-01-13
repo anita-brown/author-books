@@ -7,40 +7,40 @@ import Book from "../models/bookModel";
 
 //get all books
 
-export const getABook = async (req: Request, res: Response) => {
+export const getAllBooks = async (req: Request, res: Response) => {
   try {
-// Filtering
-const queryObj = {...req.query}
-const excludedFields = ['page','sort','limit', 'fields'];
-excludedFields.forEach(el => delete queryObj[el])
+    // Filtering
+    const queryObj = { ...req.query }
+    const excludedFields = ['page', 'sort', 'limit', 'fields'];
+    excludedFields.forEach(el => delete queryObj[el])
 
-let query =  Book.find(queryObj);
+    let query = Book.find(queryObj);
 
-// Pagination
-const page = +req.query.page! || 1
-const limit = +req.query.limit! || 5
-const numBooks= await Book.countDocuments()
-const skip = (page - 1) * limit
-const numberOfPages = Math.ceil(numBooks/limit)
-const previous =  page - 1;
-const next = page >= numberOfPages ? 0 : page + 1;
-query = query.skip(skip).limit(limit)
+    // Pagination
+    const page = +req.query.page! || 1
+    const limit = +req.query.limit! || 10
+    const numBooks = await Book.countDocuments()
+    const skip = (page - 1) * limit
+    const numberOfPages = Math.ceil(numBooks / limit)
+    const previous = page - 1;
+    const next = page >= numberOfPages ? 0 : page + 1;
+    query = query.skip(skip).limit(limit)
 
 
-// Execute query
+    // Execute query
     const books = await query
 
     res.status(200).json({
-        status: 'success',
-        result: books.length,
-        prev: previous,
-        next: next,
-        data: books
+      status: 'success',
+      result: books.length,
+      prev: previous,
+      next: next,
+      data: books
     })
-    
+
   } catch (error) {
     console.log(error, "error occured")
-    res.status(500).json({error})
+    res.status(500).json({ error })
   }
 };
 
@@ -48,23 +48,30 @@ query = query.skip(skip).limit(limit)
 
 export const create_book = async (req: Request, res: Response) => {
   try {
-    const { error } = validateBookEntry(req.body);
+    const { error, value } = validateBookEntry(req.body);
     if (error) {
-      return res.status(401).json({ msg: " Validation failed" });
+      res.status(401).json({ msg: " Validation failed" });
+    } else {
+
+      // const { authorId, bookname, isPublished, datePublished, serialNumber } =
+      //   req.body;
+      let newBook = await Book.create(value);
+      // await Book.create({
+      //   authorId,
+      //   bookname,
+      //   isPublished,
+      //   datePublished,
+      //   serialNumber,
+      // });
+
+      res.status(201).json({
+        msg: " book saved....",
+        data: {
+          newBook
+        }
+      });
     }
 
-    res.status(201).json({ msg: " book saved...." });
-
-    const { authorId, bookname, isPublished, datePublished, serialNumber } =
-      req.body;
-
-    await Book.create({
-      authorId,
-      bookname,
-      isPublished,
-      datePublished,
-      serialNumber,
-    });
   } catch (error) {
     console.log(error, "error occured.");
     res.status(500).json({ msg: "Server error occured" });
