@@ -1,6 +1,16 @@
-export default {
-    mongoURL : "mongodb+srv://anita-brown:yyQUSc7gS6peUtm@cluster0.0rfjf.mongodb.net/author-books?retryWrites=true&w=majority"
+import mongoose from 'mongoose';
+
+function connectDb() {
+    const dbUrl = process.env.DB_URL!
+    mongoose.connect(dbUrl, (error) => {
+        if (error) {
+            console.log('unable to connect to db')
+            process.exit(1)
+        }
+        console.log('connected successfully to db.')
+    })
+
+
 }
 
-
-// yyQUSc7gS6peUtm
+export default connectDb

@@ -1,6 +1,5 @@
 import  createError, { HttpError } from 'http-errors';
 import express, { NextFunction, Request, Response }  from 'express';
-
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
@@ -8,17 +7,18 @@ import logger from 'morgan';
 import authorRouter from './routes/authorRoute'
 import bookRouter from './routes/bookRoute'
 import usersRouter from './routes/usersRoute';
+import { config } from 'dotenv'; 
 import cors from 'cors';
 const corsOptions = {
   origin: ["http://localhost:3000","http://localhost:5500"],
   optionsSuccessStatus: 200
 }
 
+//enable access to .env file
+config()
 
 
-// const mongoURL = process.env.DATABASE as string,
-
-var app = express();
+const app = express();
 // view engine setup
 app.set('views', path.join(__dirname, '../../views'));
 app.set('view engine', 'jade');

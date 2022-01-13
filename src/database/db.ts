@@ -22,6 +22,8 @@ export const mongoConnectDB = () => {
           console.log("connected to mongoTestDB");
         });
       });
+
+      const memoryServer = MongoMemoryServer.create()
     }
     catch (error) {
       console.log(error);

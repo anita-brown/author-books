@@ -28,6 +28,7 @@ const mongoTestDB = () => {
                 console.log("connected to mongoTestDB");
             });
         });
+        const memoryServer = mongodb_memory_server_1.MongoMemoryServer.create();
     }
     catch (error) {
         console.log(error);

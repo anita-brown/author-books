@@ -22,12 +22,12 @@ exports.userSchema = new mongoose_1.default.Schema({
     email: {
         type: String,
         required: [true, 'An author must have a valid email'],
+        lowercase: true,
         unique: true
     },
     phoneNumber: {
         type: String,
         required: [true, 'An author must have a valid phone number'],
-        unique: true
     },
     password: {
         type: String,

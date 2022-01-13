@@ -12,13 +12,15 @@ const morgan_1 = __importDefault(require("morgan"));
 const authorRoute_1 = __importDefault(require("./routes/authorRoute"));
 const bookRoute_1 = __importDefault(require("./routes/bookRoute"));
 const usersRoute_1 = __importDefault(require("./routes/usersRoute"));
+const dotenv_1 = require("dotenv");
 const cors_1 = __importDefault(require("cors"));
 const corsOptions = {
     origin: ["http://localhost:3000", "http://localhost:5500"],
     optionsSuccessStatus: 200
 };
-// const mongoURL = process.env.DATABASE as string,
-var app = (0, express_1.default)();
+//enable access to .env file
+(0, dotenv_1.config)();
+const app = (0, express_1.default)();
 // view engine setup
 app.set('views', path_1.default.join(__dirname, '../../views'));
 app.set('view engine', 'jade');

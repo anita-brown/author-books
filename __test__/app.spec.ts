@@ -1,24 +1,143 @@
-
-// import supertest from "supertest";
-// import app from "../src/app";
-// describe("Auth", () => {
-//   const data = {
-//     firstName: "lifted",
-//     lastName: "Mayo",
-//     DOB: "12-01-2001",
-//     email: "lifted@gmail.com",
-//     phoneNo: "090899566759",
-//     password: "password",
-//   };
-//   test("signup", async () => {
-//     const response = await supertest(app).post("/user/signup").send(data);
-//     expect(response.status).toBe(201);
-//     expect(response.body.message).toBe("Signup successful");
-//     expect(response.body.data.user.email).toBe(data.email);
-//   });
-
+import supertest from "supertest";
+import app from "../src/app";
+describe("Auth", () => {
+    const data = {
+        firstName: "Morgan",
+        lastName: "Freeman",
+        DOB: "12-01-1901",
+        email: "morgan@gmail.com",
+        phoneNo: "090899566759",
+        password: "password",
+    };
+    test("signup", async () => {
+        const response = await supertest(app).post("/user/signup").send(data);
+        expect(response.status).toBe(201);
+        expect(response.body.message).toBe("signup successful...");
+        expect(response.body.data.user.email).toBe(data.email);
+    });
 
 
+    test("login", async () => {
+        const response = await supertest(app)
+            .post("/user/login")
+            .send({ email: data.email, password: data.password });
+        token = response.body.data.token;
+        // console.log(response.body);
+        expect(response.status).toBe(201);
+        expect(response.body.message).toBe("login successful");
+    });
+});
+//let res:string;
+describe("authors", () => {
+    const data = {
+        author: "Hannah Montanna",
+        age: 32,
+        address: "7, Straight Street, Walls",
+    };
+    test("create author", async () => {
+        const response = await supertest(app)
+            .post("/author")
+            .set("Authorization", `Bearer ${token}`)
+            .send(data);
+        //console.log(response.body, "****");
+        authorId = response.body.author._id;
+        ID = response.body.author.ID;
+        expect(response.status).toBe(201);
+        expect(response.body.message).toBe("successful!");
+        expect(response.body.author.author).toBe(data.author);
+    });
+    test("get all authors", async () => {
+        const response = await supertest(app)
+            .get("/author")
+            .set("Authorization", `Bearer ${token}`);
+        //console.log(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.author[0]).toHaveProperty("ID");
+    });
+    test("get an author", async () => {
+        const response = await supertest(app)
+            .get(`/author/${authorId}`)
+            .set("Authorization", `Bearer ${token}`);
+        //console.log(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.author).toHaveProperty("address");
+    });
+    test("update an author", async () => {
+        const response = await supertest(app)
+            .put(`/author/${authorId}`)
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                author: "Charis Claire",
+                age: 32,
+                address: "7, Straight Street, Walls",
+            });
+        //console.log(response.body.author.author)
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe("successful!");
+        expect(response.body.author.author).toMatch("Charis Claire");
+    });
+    test("delete an author", async () => {
+        const response = await supertest(app)
+            .delete(`/author/${authorId}`)
+            .set("Authorization", `Bearer ${token}`);
+        //   console.log(response.body)
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe("successful!");
+    });
+});
+describe("books", () => {
+    const data = {
+        name: "Sunrise",
+        isPublished: true,
+        datePublished: "2022-01-09",
+        serialNumber: "0002",
+    };
+    test("create a book", async () => {
+        const response = await supertest(app)
+            .post(`/book/${ID}`)
+            .set("Authorization", `Bearer ${token}`)
+            .send(data);
+        bookId = response.body.book._id;
+        expect(response.status).toBe(200);
+    });
+    test("get an author's book", async () => {
+        const response = await supertest(app)
+            .get(`/book/author/${authorId}`)
+            .set("Authorization", `Bearer ${token}`);
+        //console.log(response.body)
+        expect(response.status).toBe(200);
+    });
+    test("get a book", async () => {
+        const response = await supertest(app)
+            .get(`/book/${bookId}`)
+            .set("Authorization", `Bearer ${token}`);
+        //console.log(response.body.book.name);
+        expect(response.status).toBe(200);
+    });
+    test("update a book", async () => {
+        const response = await supertest(app)
+            .put(`/book/${bookId}`)
+            .set("Authorization", `Bearer ${token}`)
+            .send({
+                name: "Sunset",
+                isPublished: true,
+                datePublished: "2022-01-09",
+                serialNumber: "0002",
+            });
+        //console.log(response.body);
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe("successful!");
+        expect(response.body.book.name).toMatch("Sunset");
+    });
+    test("delete a book", async () => {
+        const response = await supertest(app)
+            .delete(`/book/${bookId}`)
+            .set("Authorization", `Bearer ${token}`);
+        //   console.log(response.body)
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe("successful!");
+    });
+});
 
 
 
@@ -33,126 +152,12 @@
 
 
 
-// import supertest from 'supertest'
-// import app from '../src/app'
 
-// describe('GET AUTHORS', () => {
-//     test('should return 200 status for all authors', async () => {
-//         const res = await supertest(app).get('/author')
-//         expect(res.statusCode).toEqual(200);
-//     })
-//     test('should return 200 status for a single author', async () => {
-//         const res = await supertest(app).get('/author/:id')
-//         expect(res.statusCode).toEqual(200);
-//     })
-// })
 
-// describe('POST AUTHOR', () => {
-//     test('return status code 201 if author data is passed correctly ', async () => {
-//         await supertest(app).post('/author').send(
-//             {
-//                 "author": "mary Dawn",
-//                 "age": 28,
-//                 "address": "5, Wall Street, Buckingham",
-//                 "books": [
-//                     {
-//                         "name": "Tomorrow is coming",
-//                         "isPublished": true,
-//                         "datePublished": 1637159508581,
-//                         "serialNumber": 10
-//                     },
-//                     {
-//                         "name": "Octobers very own",
-//                         "isPublished": false,
-//                         "datePublished": null,
-//                         "serialNumber": null
-//                     }
-//                 ]
-//             }
-//         ).set('Accept', 'application/json')
-//                 .expect('Content-Type', /json/)
-//                 .expect(201)
-//                 .expect(res => {
-//                     res.body.data.length > 0
-//                 })
-//     })
-//     test('should return bad request if some data is missing', async()=>{
-//         const res = await supertest(app).post('/author').send({
-//             author: "mary Dawn", //age is missing in the data below
-//             address: "5, Wall Street, Buckingham",
-//             books: [
-//                 {
-//                     "name": "Tomorrow is coming",
-//                     "isPublished": true,
-//                     "datePublished": 1637159508581,
-//                     "serialNumber": 10
-//                 },
-//                 {
-//                     "name": "Octobers very own",
-//                     "isPublished": false,
-//                     "datePublished": null,
-//                     "serialNumber": null
-//                 }
-//             ]
-//         })
-//         expect(res.statusCode).toEqual(400)
-//     })
-// })
-// describe('DELETE AN AUTHOR', ()=> {
-//     test('it responds witha a message of Deleted', async ()=>{
-//        const newAuthor = await supertest(app)
-//        .post('/author')
-//        .send( {
-//         "author": "mary Dawn",
-//         "age": 28,
-//         "address": "5, Wall Street, Buckingham",
-//         "books": [
-//             {
-//                 "name": "Tomorrow is coming",
-//                 "isPublished": true,
-//                 "datePublished": 1637159508581,
-//                 "serialNumber": 10
-//             },
-//             {
-//                 "name": "Octobers very own",
-//                 "isPublished": false,
-//                 "datePublished": null,
-//                 "serialNumber": null
-//             }
-//         ]
-//     })
-//     const removedAuthor = await supertest(app).delete(`/author/${newAuthor.body.data.id}`);
-//     expect(removedAuthor.body.message).toEqual(`Trashed!`)
-//     })
-// })
-// describe('PUT AUTHOR', ()=>{
-//     test('it responds with an updated data', async ()=> {
-//         const newAuthor = await supertest(app)
-//         .post('/author')
-//         .send( {
-//             "author": "mary daniel",
-//             "age": 25,
-//             "address": "5, Wall Street, ajson street, odumota lagos ",
-//             "books": [
-//                 {
-//                     "name": "Tomorrow is coming",
-//                     "isPublished": true,
-//                     "datePublished": 1637159508581,
-//                     "serialNumber": 10
-//                 },
-//                 {
-//                     "name": "Octobers very own",
-//                     "isPublished": false,
-//                     "datePublished": null,
-//                     "serialNumber": null
-//                 }
-//             ]
-//         })
-//         const updatedAuthor = await supertest(app)
-//         .put(`/author/${newAuthor.body.data.id}`)
-//         .send({author: "John doe"})
-//         expect(updatedAuthor.body.data.author).toBe("John doe");
-//         expect(updatedAuthor.body.data).toHaveProperty("id");
-//         expect(updatedAuthor.statusCode).toBe(201)
-//     })
-// })
+
+
+
+
+
+
+
