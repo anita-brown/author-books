@@ -73,11 +73,13 @@ export const create_book = async (req: Request, res: Response) => {
 
     const { error } = validateBookEntry(req.body);
     if (error) {
+      console.log(error, "from joi validation")
       res.status(401).json({ msg: " Validation failed" });
     } else {
       const newBook = await Book.create(req.body);
       res.status(201).json({
-        message: " book saved....",
+        status: "success",
+        message: "book saved...",
         data: {
           newBook
         }
@@ -123,7 +125,7 @@ export const deleteBook = (req: Request, res: Response) => {
       if (err) return res.json(err);
 
       if (books) {
-        return res.json(books);
+        return res.status(201).json(books);
       }
     });
   } catch (error) {

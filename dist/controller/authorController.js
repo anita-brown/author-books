@@ -117,8 +117,8 @@ exports.getAuthorById = getAuthorById;
 // delete Author
 const deleteAuthor = (req, res) => {
     try {
-        authorModel_1.default.findOneAndDelete({ _id: req.params.id }, (err, authors) => {
-            res.status(201).json({ msg: " author deleted...." });
+        const data = authorModel_1.default.findOneAndDelete({ _id: req.params.id }, (err, authors) => {
+            res.status(201).json({ status: "success", message: " author deleted....", data });
             if (err)
                 return res.json(err);
             if (authors) {

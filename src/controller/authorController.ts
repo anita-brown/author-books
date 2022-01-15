@@ -155,8 +155,8 @@ export const deleteAuthor = (req: Request, res: Response) => {
 
     try {
 
-        Author.findOneAndDelete({ _id: req.params.id }, (err: any, authors: string) => {
-            res.status(201).json({ msg: " author deleted...." })
+      const data =  Author.findOneAndDelete({ _id: req.params.id }, (err: any, authors: string) => {
+            res.status(201).json({status: "success", message: " author deleted...." ,data})
             if (err) return res.json(err);
 
             if (authors) {
