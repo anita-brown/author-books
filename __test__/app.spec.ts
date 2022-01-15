@@ -3,75 +3,132 @@ import app from "../src/app";
 import { connectDb, closeDb, clearDb } from '../memoryServer/db';
 
 let request: supertest.SuperTest<supertest.Test>;
+let token =''
+let id = ''
+
 beforeAll(async () => {
     await connectDb();
     request = supertest(app)
 })
 
 afterEach(async () => {
-    await clearDb();
+    // await clearDb();
 });
 
 afterAll(async () => {
     await closeDb();
 })
 
-describe("Auth", () => {
+describe("User Authentication", () => {
     const data = {
         firstName: "Morgan",
         lastName: "Freeman",
-        DOB: "12-01-1901",
+        DOB: "25/07/1976",
         email: "morgan@gmail.com",
-        phoneNumber: "090899566759",
-        password: "password",
-    };
+        phoneNumber: "08075743421",
+        password: "12345678"
+    }
+
     test("user with valid data should signup", async () => {
         const response = await request.post("/user/signup").send(data);
+        // console.log(response.body)
         expect(response.status).toBe(201);
         expect(response.body.status).toBe('success');
-        expect(response.body.data.firstName).toBe(data.firstName);
-        expect(response.body.data.email).toBe(data.email)
-    });
-
-    test("user with valid data should signup", async () => {
-        const response = await request.post("/user/signup").send({
-            ...data,
-            email: "anita@email.com"
-        });
-        expect(response.status).toBe(201);
-        expect(response.body.status).toBe('success');
-
-        expect(response.body.data.email).toBe('anita@email.com')
-
-    });
-
-    test('user with invalid email should not signup', async () => {
-        const invalidData = {
-            firstName: "Morgan",
-            lastName: "Freeman",
-            DOB: "12-01-1901",
-            email: "invalid email",
-            phoneNumber: "090899566759",
-            password: "password",
-        }
-
-        const response = await request.post('/user/signup').send(invalidData);
-
-        expect(response.status).toBe(400);
-        expect(response.body.msg).toBe('Validation failed...')
+        expect(response.body).toHaveProperty('token')
+        expect(response.body).toHaveProperty('data')
+        expect(response.body.data.email).toBe(data.email);
     });
 
 
-    // test("login", async () => {
-    //     const response = await supertest(app)
-    //         .post("/user/login")
-    //         .send({ email: data.email, password: data.password });
-    //     token = response.body.data.token;
-    //     // console.log(response.body);
-    //     expect(response.status).toBe(201);
-    //     expect(response.body.message).toBe("login successful");
-    // });
+
 });
+
+
+
+describe("User Authorization", () => {
+    const logData = {
+        email: "morgan@gmail.com",
+        password: "12345678"
+    }
+
+test("user with valid email and password should login", async () => {
+        const response = await request.post("/user/login").send(logData);
+
+        token = response.body.token;
+
+        // console.log(response.body)
+        expect(response.status).toBe(201);
+        expect(response.body.status).toBe('success');
+        expect(response.body).toHaveProperty('token')
+        expect(response.body).toHaveProperty('data')
+        expect(response.body.data.email).toBe(logData.email);
+        //  expect(response.body.data.password).toBe(logData.password);
+    
+    });
+})
+
+describe("Endpoints for creating authors", () => {
+const authorData = {
+      
+ author_name: "Rook Newson",
+ age: 31,
+ address: "37, Brew way, Buckingham"
+    
+}
+test("Create a new Author", async () => {
+        const response = await request.post("/author/create_authors").send(authorData).set(`Authorization`, `Bearer ${token}`);
+
+        console.log(token)
+        console.log(response.body)
+        expect(response.status).toBe(201);
+        // expect(response.body.status).toBe('success');
+        // expect(response.body).toHaveProperty('token')
+        // expect(response.body).toHaveProperty('data')
+        // expect(response.body.data.email).toBe(logData.email);
+        //  expect(response.body.data.password).toBe(logData.password);
+    
+    });
+})
+
+
+describe("Getting all available authors", () => {
+
+test("Get all Authors", async () => {
+        const response = await request.get("/author").set(`Authorization`, `Bearer ${token}`);
+
+        // console.log(token)
+        // console.log(response.body)
+        expect(response.status).toBe(200);
+        expect(response.body.status).toBe('success');
+        // expect(response.body).toHaveProperty('token')
+        expect(response.body).toHaveProperty('data')
+        // expect(response.body.data.email).toBe(logData.email);
+        //  expect(response.body.data.password).toBe(logData.password);
+    
+    });
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //let res:string;
 // describe("authors", () => {
 //     const data = {
