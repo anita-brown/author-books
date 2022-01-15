@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 function connectDb() {
     const dbUrl = process.env.DB_URL!
+    console.log(dbUrl, "database url")
     mongoose.connect(dbUrl, (error) => {
         if (error) {
             console.log('unable to connect to db')

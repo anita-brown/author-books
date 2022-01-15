@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken"
 const mySecret = 'ughyjkkoiughjkhu3jkhu748uhjki78h'
 import mongoose from "mongoose"
 import Author from "../models/authorModel"
-import joi from "joi"
+import joi, { string } from "joi"
 
 
 //get all authors
@@ -51,7 +51,7 @@ export const getAllAuthors = async (req: Request, res: Response) => {
 
 export const create_authors = async (req: Request, res: Response) => {
     try {
-       
+
 
         const { error } = validateEntry(req.body);
         if (error) {
@@ -78,34 +78,9 @@ export const create_authors = async (req: Request, res: Response) => {
 }
 
 
-
-// update author
-
-// export const updateAuthor=(req:Request,res:Response)=>{
-
-// //catch error from request body
-// try {
-
-//     const author = Author.findOneAndUpdate({_id:req.params.id}, req.body, {
-//         new: true})
-
-//     if(!author){
-//         return res.status(401).json({message: `author with id ${req.params.id} does not exist`})  
-//     }
-//     console.log(author)
-//     res.status(201).json({msg:" author updated...."})
-
-//     } 
-//     catch (error) {
-//         console.log(error, "error occured")
-//      res.status(500).json({error})
-//     }
-
-// }
-
 export async function updateAuthor(req: Request, res: Response) {
     try {
-       
+
 
         const { author_name, age, address } = req.body
         const { id } = req.params
@@ -124,38 +99,28 @@ export async function updateAuthor(req: Request, res: Response) {
             message: 'Updated successfully',
             data
         })
-       
-   } catch (error) {
+
+    } catch (error) {
         // console.log(error, "error occured")
         res.status(500).json({ error });
 
-   }
+    }
 }
 
 
 //get author by id
 
 
-export const getAuthorById = (req: Request, res: Response) => {
-
-    //catch error from request body
+export const getAuthorById =  async (req: Request, res: Response) => {
     try {
-
-        Author.findById(req.params.id, (err: any, authors: author) => {
-
-            if (authors) {
-
-                return res.status(200).json({ status: "success" })
-            }
-
-        })
+        const { id } = req.params
+        const data = await Author.findById({ _id: id })
+        
+        res.status(201).json({status: "success", data})
+        
     } catch (error) {
-        console.log(error, "error occured")
         res.status(500).json({ error });
-
     }
-
-
 }
 
 // delete Author
@@ -164,13 +129,13 @@ export const deleteAuthor = (req: Request, res: Response) => {
 
     try {
 
-      const data =  Author.findOneAndDelete({ _id: req.params.id }, (err: any, authors: string) => {
-            res.status(201).json({status: "success", message: " author deleted...." ,data})
+        Author.findOneAndDelete({ _id: req.params.id }, (err: any, authors: author) => {
             if (err) return res.json(err);
 
             if (authors) {
 
-                return res.json(authors)
+
+                return res.status(201).json({ status: "success", message: " author deleted....", authors })
             }
 
         })

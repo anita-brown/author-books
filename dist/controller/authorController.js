@@ -61,23 +61,6 @@ const create_authors = async (req, res) => {
     }
 };
 exports.create_authors = create_authors;
-// update author
-// export const updateAuthor=(req:Request,res:Response)=>{
-// //catch error from request body
-// try {
-//     const author = Author.findOneAndUpdate({_id:req.params.id}, req.body, {
-//         new: true})
-//     if(!author){
-//         return res.status(401).json({message: `author with id ${req.params.id} does not exist`})  
-//     }
-//     console.log(author)
-//     res.status(201).json({msg:" author updated...."})
-//     } 
-//     catch (error) {
-//         console.log(error, "error occured")
-//      res.status(500).json({error})
-//     }
-// }
 async function updateAuthor(req, res) {
     try {
         const { author_name, age, address } = req.body;
@@ -105,17 +88,13 @@ async function updateAuthor(req, res) {
 }
 exports.updateAuthor = updateAuthor;
 //get author by id
-const getAuthorById = (req, res) => {
-    //catch error from request body
+const getAuthorById = async (req, res) => {
     try {
-        authorModel_1.default.findById(req.params.id, (err, authors) => {
-            if (authors) {
-                return res.status(200).json({ status: "success" });
-            }
-        });
+        const { id } = req.params;
+        const data = await authorModel_1.default.findById({ _id: id });
+        res.status(201).json({ status: "success", data });
     }
     catch (error) {
-        console.log(error, "error occured");
         res.status(500).json({ error });
     }
 };
@@ -123,12 +102,11 @@ exports.getAuthorById = getAuthorById;
 // delete Author
 const deleteAuthor = (req, res) => {
     try {
-        const data = authorModel_1.default.findOneAndDelete({ _id: req.params.id }, (err, authors) => {
-            res.status(201).json({ status: "success", message: " author deleted....", data });
+        authorModel_1.default.findOneAndDelete({ _id: req.params.id }, (err, authors) => {
             if (err)
                 return res.json(err);
             if (authors) {
-                return res.json(authors);
+                return res.status(201).json({ status: "success", message: " author deleted....", authors });
             }
         });
     }
