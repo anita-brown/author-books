@@ -51,7 +51,7 @@ export const getAllAuthors = async (req: Request, res: Response) => {
 
 export const create_authors = async (req: Request, res: Response) => {
     try {
-        // console.log('yesssssssssssssss')
+       
 
         const { error } = validateEntry(req.body);
         if (error) {
@@ -132,13 +132,11 @@ export const getAuthorById = (req: Request, res: Response) => {
     //catch error from request body
     try {
 
-        Author.findById(req.params.id, (err: any, authors: string) => {
-
-            if (err) return res.json(err);
+        Author.findById(req.params.id, (err: any, authors: author) => {
 
             if (authors) {
 
-                return res.json(authors)
+                return res.status(200).json({ status: "success" })
             }
 
         })

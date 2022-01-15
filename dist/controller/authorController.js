@@ -43,7 +43,6 @@ exports.getAllAuthors = getAllAuthors;
 //create authors details
 const create_authors = async (req, res) => {
     try {
-        // console.log('yesssssssssssssss')
         const { error } = (0, utils_1.validateEntry)(req.body);
         if (error) {
             return res.status(401).json({ msg: " Validation failed" });
@@ -92,7 +91,8 @@ async function updateAuthor(req, res) {
     age && (author.age = age);
     address && (author.address = address);
     const data = await author.save();
-    res.status(201).json({ status: "success",
+    res.status(201).json({
+        status: "success",
         message: 'Updated successfully',
         data
     });
@@ -103,10 +103,8 @@ const getAuthorById = (req, res) => {
     //catch error from request body
     try {
         authorModel_1.default.findById(req.params.id, (err, authors) => {
-            if (err)
-                return res.json(err);
             if (authors) {
-                return res.json(authors);
+                return res.status(200).json({ status: "success" });
             }
         });
     }
@@ -133,18 +131,3 @@ const deleteAuthor = (req, res) => {
     }
 };
 exports.deleteAuthor = deleteAuthor;
-// const queryObj = {...req.query}
-// const excludedFields = ['page','sort','limit', 'fields'];
-// excludedFields.forEach(el => delete queryObj[el]))
-// let query =  Author.find(queryObj);
-// // Pagination
-// const page = +req.query.page || 1
-// const limit = req.query.limit || 3
-// const skip = (page - 1) * limit
-// query = query.skip(skip).limit(limit)
-// if(req.query.page){
-//     const numAuthors = await Author.countDocuments()
-//     if(skip > numAuthors) throw new Error('This page doesnt exist')
-// }
-// // Execute query
-// const authors = await query

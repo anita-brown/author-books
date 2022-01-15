@@ -1,9 +1,10 @@
 import supertest from "supertest";
 import app from "../src/app";
 import { connectDb, closeDb, clearDb } from '../memoryServer/db';
+// import { response } from "express";
 
 let request: supertest.SuperTest<supertest.Test>;
-let token =''
+let token = ''
 let id = ''
 
 beforeAll(async () => {
@@ -51,7 +52,7 @@ describe("User Authorization", () => {
         password: "12345678"
     }
 
-test("user with valid email and password should login", async () => {
+    test("user with valid email and password should login", async () => {
         const response = await request.post("/user/login").send(logData);
 
         token = response.body.token;
@@ -62,54 +63,112 @@ test("user with valid email and password should login", async () => {
         expect(response.body).toHaveProperty('token')
         expect(response.body).toHaveProperty('data')
         expect(response.body.data.email).toBe(logData.email);
-        //  expect(response.body.data.password).toBe(logData.password);
-    
+
+
     });
 })
 
 describe("Endpoints for creating authors", () => {
-const authorData = {
-      
- author_name: "Rook Newson",
- age: 31,
- address: "37, Brew way, Buckingham"
-    
-}
-test("Create a new Author", async () => {
+    const authorData = {
+
+        author_name: "Rook Newson",
+        age: 31,
+        address: "37, Brew way, Buckingham"
+
+    }
+    //         ID = response.body.author.ID;
+    test("Create a new Author", async () => {
         const response = await request.post("/author/create_authors").send(authorData).set(`Authorization`, `Bearer ${token}`);
 
-        console.log(token)
-        console.log(response.body)
         expect(response.status).toBe(201);
-        // expect(response.body.status).toBe('success');
-        // expect(response.body).toHaveProperty('token')
-        // expect(response.body).toHaveProperty('data')
-        // expect(response.body.data.email).toBe(logData.email);
-        //  expect(response.body.data.password).toBe(logData.password);
-    
+        expect(response.body.status).toBe('success');
+        expect(response.body).toHaveProperty('data')
+        expect(response.body.data.author_name).toBe(authorData.author_name);
+        expect(response.body.data.age).toBe(authorData.age);
+        expect(response.body.data.address).toBe(authorData.address);
+
     });
 })
 
 
-describe("Getting all available authors", () => {
+describe("Endpoints for getting all available authors", () => {
 
-test("Get all Authors", async () => {
+    test("Get all Authors", async () => {
         const response = await request.get("/author").set(`Authorization`, `Bearer ${token}`);
 
-        // console.log(token)
-        // console.log(response.body)
         expect(response.status).toBe(200);
         expect(response.body.status).toBe('success');
-        // expect(response.body).toHaveProperty('token')
         expect(response.body).toHaveProperty('data')
-        // expect(response.body.data.email).toBe(logData.email);
-        //  expect(response.body.data.password).toBe(logData.password);
-    
+        expect(response.body).toHaveProperty('result')
+
     });
 })
 
 
+describe("Endpoints for getting a author", () => {
 
+    test("Get a new Author by id", async () => {
+        const response = await request.get(`/author/${id}`)
+            .set(`Authorization`, `Bearer ${token}`);
+        id = response.body.data._id;
+
+        expect(response.status).toBe(200);
+        expect(response.body.status).toBe('success');
+        // expect(response.body.author).toHaveProperty('data')
+
+
+    });
+})
+
+// describe("Endpoints for updating authors", () => {
+//     const data = {
+
+//         author_name: "Rook Newson",
+//         age: 31,
+//         address: "37, Brew way, Buckingham"
+
+//     }
+//     //         ID = response.body.author.ID;
+//     test("Update a new Author", async () => {
+//         const response = await request.put(`/author/${id}`).send(data).set(`Authorization`, `Bearer ${token}`);
+//         id = response.body.data._id;
+
+//         expect(response.status).toBe(201);
+//         expect(response.body.status).toBe('success');
+//         // expect(response.body).toHaveProperty('data')
+//         // expect(response.body.data.author_name).toBe(updateData.author_name);
+//         // expect(response.body.data.age).toBe(updateData.age);
+//         // expect(response.body.data.address).toBe(updateData.address);
+
+//     });
+// })
+
+
+
+// describe("Endpoints for creating books", () => {
+//     const bookData = {
+
+//         authorId: id,
+//         bookname: "How to Be a Senior Dev",
+//         isPublished: true,
+//         datePublished: 1637159508581,
+//         serialNumber: 19
+
+//     }
+//     test("Create a new book", async () => {
+//         const response = await request.post("/book").send(bookData).set(`Authorization`, `Bearer ${token}`);
+
+//         // expect(response.status).toBe(201);
+//         // expect(response.body.status).toBe('success');
+//         expect(response.body).toHaveProperty('data')
+//         // expect(response.body).toHaveProperty('newBook')
+
+//         // expect(response.body.data.author_name).toBe(authorData.author_name);
+//         // expect(response.body.data.age).toBe(authorData.age);
+//         // expect(response.body.data.address).toBe(authorData.address);
+
+//     });
+// })
 
 
 

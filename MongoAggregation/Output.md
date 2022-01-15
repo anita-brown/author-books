@@ -140,8 +140,8 @@
    },
    ],
    },
-   },
    ];
+   },
 7. Write a MongoDB query to find the restaurant Id, name, and grades for those restaurants which achieved a grade of "A" and scored 11 on an ISODate "2014-08-11T00:00:00Z" among many of survey dates...
    [
    {

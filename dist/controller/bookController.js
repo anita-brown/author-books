@@ -43,23 +43,25 @@ exports.getAllBooks = getAllBooks;
 // create book
 const create_book = async (req, res) => {
     try {
-        const { error, value } = (0, utils_1.validateBookEntry)(req.body);
+        // const { error } = validateEntry(req.body);
+        // if (error) {
+        //   return res.status(401).json({ msg: " Validation failed" })
+        // }
+        // const { author_name, age, address } = req.body
+        // const data = await Author.create({
+        //   author_name,
+        //   age,
+        //   address
+        // })
+        // res.status(201).json({ status: "success", message: "author saved....", data })
+        const { error } = (0, utils_1.validateBookEntry)(req.body);
         if (error) {
             res.status(401).json({ msg: " Validation failed" });
         }
         else {
-            // const { authorId, bookname, isPublished, datePublished, serialNumber } =
-            //   req.body;
-            let newBook = await bookModel_1.default.create(value);
-            // await Book.create({
-            //   authorId,
-            //   bookname,
-            //   isPublished,
-            //   datePublished,
-            //   serialNumber,
-            // });
+            const newBook = await bookModel_1.default.create(req.body);
             res.status(201).json({
-                msg: " book saved....",
+                message: " book saved....",
                 data: {
                     newBook
                 }
