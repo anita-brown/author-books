@@ -104,23 +104,32 @@ export const create_authors = async (req: Request, res: Response) => {
 // }
 
 export async function updateAuthor(req: Request, res: Response) {
-    const { author_name, age, address } = req.body
-    const { id } = req.params
-    const author = await Author.findOne({ _id: id })
-    if (!author) {
-        res.status(404).json({
-            error: 'Author not found'
+    try {
+       
+
+        const { author_name, age, address } = req.body
+        const { id } = req.params
+        const author = await Author.findOne({ _id: id })
+        if (!author) {
+            res.status(404).json({
+                error: 'Author not found'
+            })
+        }
+        author_name && (author!.author_name = author_name)
+        age && (author!.age = age)
+        address && (author!.address = address)
+        const data = await author!.save()
+        res.status(201).json({
+            status: "success",
+            message: 'Updated successfully',
+            data
         })
-    }
-    author_name && (author!.author_name = author_name)
-    age && (author!.age = age)
-    address && (author!.address = address)
-    const data = await author!.save()
-    res.status(201).json({
-        status: "success",
-        message: 'Updated successfully',
-        data
-    })
+       
+   } catch (error) {
+        // console.log(error, "error occured")
+        res.status(500).json({ error });
+
+   }
 }
 
 
